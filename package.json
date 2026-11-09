@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,9 +14,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/marik98/bulls-and-cows/issues"
   },
-  "homepage": "https://github.com/marik98/bulls-and-cows#readme"
+  "homepage": "https://github.com/marik98/bulls-and-cows#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
 }
