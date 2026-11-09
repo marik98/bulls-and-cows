@@ -88,11 +88,44 @@ describe('evaluateGuess', () => {
   });
 
   it('должна правильно считать частичное совпадение', () => {
-    // секрет 1234, попытка 1536
+    // секрет 1234, попытка 1563
     // bulls: 1 на месте (1 шт)
     // cows: 3 угадана, но не на месте (1 шт)
     // 5 и 6 - вообще нет в секрете
-    const result = evaluateGuess('1234', '1536');
+    const result = evaluateGuess('1234', '1563');
     expect(result).toEqual({ bulls: 1, cows: 1 });
   });
 });
+export interface GuessResult {
+  bulls: number;
+  cows: number;
+}
+
+/**
+ * Сравнивает догадку с секретом, возвращая количество быков и коров.
+ * Реализовано через функции высшего порядка (map/filter).
+ */
+export const evaluateGuess = (secret: string, guess: string): GuessResult => {
+  const secretArr = secret.toLowerCase().split('');
+  const guessArr = guess.toLowerCase().split('');
+
+  // Проходим по каждому символу догадки и запоминаем его индексы
+  const matches = guessArr.map((char, guessIndex) => {
+    const secretIndex = secretArr.indexOf(char);
+    return { char, guessIndex, secretIndex };
+  });
+
+  // Bulls: символы, у которых индекс в секрете совпал с индексом в догадке
+  const bulls = matches.filter(
+    ({ guessIndex, secretIndex }) => secretIndex === guessIndex
+  ).length;
+
+  // Cows: символы, которые есть в секрете (secretIndex !== -1),
+  // но стоят не на той же позиции (secretIndex !== guessIndex)
+  const cows = matches.filter(
+    ({ secretIndex, guessIndex }) =>
+      secretIndex !== -1 && secretIndex !== guessIndex
+  ).length;
+
+  return { bulls, cows };
+};
