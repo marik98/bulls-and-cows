@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isValidGuess } from './game';
+import { isValidGuess, generateSecret } from './game';
 
 describe('isValidGuess', () => {
   it('должна возвращать true для корректных догадок', () => {
@@ -22,5 +22,34 @@ describe('isValidGuess', () => {
     expect(isValidGuess('112', 3, 10)).toBe(false);
     expect(isValidGuess('000', 3, 10)).toBe(false);
     expect(isValidGuess('aA1', 3, 16)).toBe(false); // a и A - одна и та же цифра
+  });
+});
+
+describe('generateSecret', () => {
+  it('должна генерировать строку правильной длины', () => {
+    const secret = generateSecret(4, 10);
+    expect(secret.length).toBe(4);
+  });
+
+  it('должна содержать только уникальные символы', () => {
+    const secret = generateSecret(4, 10);
+    const uniqueChars = new Set(secret.split(''));
+    expect(uniqueChars.size).toBe(4);
+  });
+
+  it('должна использовать только допустимые символы для выбранной системы', () => {
+    const secretHex = generateSecret(6, 16);
+    expect(/^[0-9a-f]{6}$/.test(secretHex)).toBe(true); // только hex-символы
+  });
+
+  it('должна использовать переданный источник случайности (детерминированный тест)', () => {
+    // Создаем фейковую функцию random, которая всегда возвращает 0
+    const mockRandom = () => 0;
+
+    // Если random всегда 0, функция всегда должна брать первый доступный символ.
+    // Для base=10 (0-9) и length=4 это будет '0123'.
+    const secret = generateSecret(4, 10, mockRandom);
+
+    expect(secret).toBe('0123');
   });
 });
