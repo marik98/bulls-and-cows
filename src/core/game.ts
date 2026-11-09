@@ -1,4 +1,4 @@
-import { createDigitValidator } from './validators';
+import { createDigitValidator } from './validators.js';
 
 /**
  * Проверяет, является ли догадка валидной.

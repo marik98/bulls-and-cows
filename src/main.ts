@@ -1,6 +1,11 @@
-import { GameState, initialGameState, addAttempt, setWinStatus } from './state';
-import { isValidGuess, generateSecret, evaluateGuess } from './core/game';
-import { createDigitValidator } from './core/validators';
+import {
+  GameState,
+  initialGameState,
+  addAttempt,
+  setWinStatus,
+} from './state.js';
+import { isValidGuess, generateSecret, evaluateGuess } from './core/game.js';
+import { createDigitValidator } from './core/validators.js';
 
 // Текущее состояние игры
 let state: GameState = initialGameState;
@@ -194,9 +199,17 @@ const renderWin = () => {
 
 // --- Функции для работы с рекордами ---
 
+interface GameRecord {
+  attempts: number;
+  time: number;
+  length: number;
+  base: number;
+  date: string;
+}
+
 const saveRecord = (attempts: number, time: number) => {
   const recordsStr = localStorage.getItem('bulls-cows-records');
-  const records = recordsStr ? JSON.parse(recordsStr) : [];
+  const records: GameRecord[] = recordsStr ? JSON.parse(recordsStr) : [];
 
   records.push({
     attempts,
@@ -207,7 +220,9 @@ const saveRecord = (attempts: number, time: number) => {
   });
 
   // Сортируем: сначала по попыткам, потом по времени
-  records.sort((a: any, b: any) => a.attempts - b.attempts || a.time - b.time);
+  records.sort(
+    (a: GameRecord, b: GameRecord) => a.attempts - b.attempts || a.time - b.time
+  );
 
   // Оставляем топ-10
   localStorage.setItem(

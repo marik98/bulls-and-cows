@@ -1,4 +1,4 @@
-import { GuessResult } from './core/game';
+import { GuessResult } from './core/game.js';
 
 export interface Attempt {
   guess: string;
