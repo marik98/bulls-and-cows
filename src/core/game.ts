@@ -129,3 +129,29 @@ export const evaluateGuess = (secret: string, guess: string): GuessResult => {
 
   return { bulls, cows };
 };
+// Создаем хранилище для мемоизации (кеш)
+const memoCache = new Map<string, number>();
+
+/**
+ * Считает количество возможных секретов (перестановки без повторений).
+ * Реализовано рекурсивно и мемоизировано для оптимизации.
+ */
+export const countPossibleSecrets = (length: number, base: number): number => {
+  if (length === 0) return 1;
+  if (length > base) return 0; // Нельзя выбрать больше уникальных цифр, чем есть в системе
+
+  const cacheKey = `${length}-${base}`;
+
+  // Проверяем кеш (мемоизация)
+  if (memoCache.has(cacheKey)) {
+    return memoCache.get(cacheKey)!;
+  }
+
+  // Рекурсивная формула: P(n, k) = k * P(n-1, k-1)
+  const result = base * countPossibleSecrets(length - 1, base - 1);
+
+  // Сохраняем результат в кеш
+  memoCache.set(cacheKey, result);
+
+  return result;
+};
