@@ -1,4 +1,5 @@
 import { createDigitValidator } from './validators';
+import { isValidGuess, generateSecret, evaluateGuess } from './game';
 
 /**
  * Проверяет, является ли догадка валидной.
@@ -57,3 +58,41 @@ export const generateSecret = (
 
   return result.secret;
 };
+describe('evaluateGuess', () => {
+  it('должна возвращать 0 bulls и 0 cows, если ничего не угадано', () => {
+    const result = evaluateGuess('1234', '5678');
+    expect(result).toEqual({ bulls: 0, cows: 0 });
+  });
+
+  it('должна возвращать правильное количество bulls, если всё угадано', () => {
+    const result = evaluateGuess('1234', '1234');
+    expect(result).toEqual({ bulls: 4, cows: 0 });
+  });
+
+  it('должна правильно считать bulls и cows в перемешанном варианте', () => {
+    // секрет 1234, попытка 1243
+    // bulls: 1 и 2 на своих местах (2 штуки)
+    // cows: 3 и 4 угаданы, но не на своих местах (2 штуки)
+    const result = evaluateGuess('1234', '1243');
+    expect(result).toEqual({ bulls: 2, cows: 2 });
+  });
+
+  it('должна работать со строками, начинающимися с нуля', () => {
+    const result = evaluateGuess('0123', '3210');
+    expect(result).toEqual({ bulls: 0, cows: 4 });
+  });
+
+  it('должна корректно сравнивать hex-цифры независимо от регистра', () => {
+    const result = evaluateGuess('abcd', 'ABCD');
+    expect(result).toEqual({ bulls: 4, cows: 0 });
+  });
+
+  it('должна правильно считать частичное совпадение', () => {
+    // секрет 1234, попытка 1536
+    // bulls: 1 на месте (1 шт)
+    // cows: 3 угадана, но не на месте (1 шт)
+    // 5 и 6 - вообще нет в секрете
+    const result = evaluateGuess('1234', '1536');
+    expect(result).toEqual({ bulls: 1, cows: 1 });
+  });
+});
