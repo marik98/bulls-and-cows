@@ -24,3 +24,36 @@ export const isValidGuess = (
 
   return uniqueChars.size === chars.length;
 };
+/**
+ * Генерирует секретное число.
+ * @param length - длина секрета
+ * @param base - система счисления
+ * @param random - источник случайности (по умолчанию Math.random)
+ */
+export const generateSecret = (
+  length: number,
+  base: number,
+  random: () => number = Math.random
+): string => {
+  const alphabet = '0123456789abcdef'.slice(0, base).split('');
+
+  const result = Array.from({ length }).reduce<{
+    pool: string[];
+    secret: string;
+  }>(
+    (acc) => {
+      // Выбираем случайный индекс из оставшихся доступных символов
+      const randomIndex = Math.floor(random() * acc.pool.length);
+      const selectedChar = acc.pool[randomIndex];
+
+      return {
+        // Иммутабельно удаляем выбранный символ из пула
+        pool: acc.pool.filter((_, index) => index !== randomIndex),
+        secret: acc.secret + selectedChar,
+      };
+    },
+    { pool: alphabet, secret: '' }
+  );
+
+  return result.secret;
+};
